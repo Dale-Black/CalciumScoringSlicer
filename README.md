@@ -21,12 +21,11 @@ graph TB
     class B,C,D,E unique2;
 ```
 - Handles scan calibration and voxel spacing information
-- Accounts for different tube voltages and intensity thresholds
-- Easy to use `score()` function
+- Easy to use GUI function
 
 ## Installation
 
-
+WIP
 
 ## Usage
 
