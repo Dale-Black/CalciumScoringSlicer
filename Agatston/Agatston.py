@@ -310,11 +310,11 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         # Calculate the mean of the masked voxels using calibration segmentation
         mean_value_calibration = np.nanmean(masked_voxels_calibration)
-        density_calibration1 = self.ui.calibrationDensitySpinBox.currentNode()
-        print(density_calibration1)
+        density_calibration = self.ui.calibrationDensitySpinBox.value
+        print(density_calibration)
         # density_calibration = self.ui.calibrationDensitySpinBox.value()
         # print(density_calibration)
-        density_calibration = 0.200
+        # density_calibration = 0.200
         mass_cal_factor = density_calibration / mean_value_calibration
 
         # Score
