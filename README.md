@@ -21,7 +21,7 @@ graph TB
     class B,C,D,E unique2;
 ```
 - Handles scan calibration and voxel spacing information
-- Easy to use GUI function
+- Easy to use GUI
 
 ## Installation
 
