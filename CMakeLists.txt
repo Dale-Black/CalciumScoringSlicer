@@ -21,6 +21,7 @@ include(${Slicer_USE_FILE})
 # Extension modules
 add_subdirectory(Agatston)
 add_subdirectory(Agatston)
+add_subdirectory(VolumeFraction)
 ## NEXT_MODULE
 
 #-----------------------------------------------------------------------------
