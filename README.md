@@ -33,8 +33,8 @@ The general workflow is:
 
 1. Load DICOM Data
 2. Create segmentation and segment the parts you need
-3. Enter specific algorithm plugin from modules dropdown menu under CalciumScoring
-4. Select corresponding input volume, CAC segmentation, calibration segmentation (optional), and density calibration (optional)
+3. Enter algorithm specific module from CalciumScoring category from dropdown menu
+4. Select corresponding required and optional inputs (input volume, segmentation, etc.)
 5. Press score button
 
 ### Algorithms
