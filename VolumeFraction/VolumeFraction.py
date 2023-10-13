@@ -12,25 +12,26 @@ import numpy as np
 slicer.util.pip_install('juliacall')
 from juliacall import Main as jl
 
+
 #
-# Agatston
+# VolumeFraction
 #
 
-class Agatston(ScriptedLoadableModule):
+class VolumeFraction(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Agatston"  # TODO: make this more human readable by adding spaces
+        self.parent.title = "VolumeFraction"  # TODO: make this more human readable by adding spaces
         self.parent.categories = ["CalciumScoring"]  # TODO: set categories (folders where the module shows up in the module selector)
         self.parent.dependencies = []  # TODO: add here list of module names that this module requires
         self.parent.contributors = ["Dale Black (University of California, Irvine)", "Kelvin Zhao (University of California, Irvine)"]  # TODO: replace with "Firstname Lastname (Organization)"
         # TODO: update with short description of the module and a link to online module documentation
         self.parent.helpText = """
 This is an example of scripted loadable module bundled in an extension.
-See more information in <a href="https://github.com/organization/projectname#Agatston">module documentation</a>.
+See more information in <a href="https://github.com/organization/projectname#VolumeFraction">module documentation</a>.
 """
         # TODO: replace with organization, grant and thanks
         self.parent.acknowledgementText = """
@@ -59,44 +60,44 @@ def registerSampleData():
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
 
-    # Agatston1
+    # VolumeFraction1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='Agatston',
-        sampleName='Agatston1',
+        category='VolumeFraction',
+        sampleName='VolumeFraction1',
         # Thumbnail should have size of approximately 260x280 pixels and stored in Resources/Icons folder.
         # It can be created by Screen Capture module, "Capture all views" option enabled, "Number of images" set to "Single".
-        thumbnailFileName=os.path.join(iconsPath, 'Agatston1.png'),
+        thumbnailFileName=os.path.join(iconsPath, 'VolumeFraction1.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
-        fileNames='Agatston1.nrrd',
+        fileNames='VolumeFraction1.nrrd',
         # Checksum to ensure file integrity. Can be computed by this command:
         #  import hashlib; print(hashlib.sha256(open(filename, "rb").read()).hexdigest())
         checksums='SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95',
         # This node name will be used when the data set is loaded
-        nodeNames='Agatston1'
+        nodeNames='VolumeFraction1'
     )
 
-    # Agatston2
+    # VolumeFraction2
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='Agatston',
-        sampleName='Agatston2',
-        thumbnailFileName=os.path.join(iconsPath, 'Agatston2.png'),
+        category='VolumeFraction',
+        sampleName='VolumeFraction2',
+        thumbnailFileName=os.path.join(iconsPath, 'VolumeFraction2.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
-        fileNames='Agatston2.nrrd',
+        fileNames='VolumeFraction2.nrrd',
         checksums='SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97',
         # This node name will be used when the data set is loaded
-        nodeNames='Agatston2'
+        nodeNames='VolumeFraction2'
     )
 
 
 #
-# AgatstonWidget
+# VolumeFractionWidget
 #
 
-class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -116,13 +117,10 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Called when the user opens the module the first time and the widget is initialized.
         """
         ScriptedLoadableModuleWidget.setup(self)
-        
-        import os
-        os.environ['JULIA_SSL_CA_ROOTS_PATH'] = ""
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/Agatston.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath('UI/VolumeFraction.ui'))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -133,7 +131,7 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Create logic class. Logic implements all computations that should be possible to run
         # in batch mode, without a graphical user interface.
-        self.logic = AgatstonLogic()
+        self.logic = VolumeFractionLogic()
 
         # Connections
 
@@ -144,10 +142,13 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
         # (in the selected parameter node).
         self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-        self.ui.segmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+        self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+        self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+        self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
+        self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
         # Buttons
-        self.ui.scoreButton.connect('clicked(bool)', self.onScoreButton)
+        self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
@@ -204,13 +205,6 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             firstVolumeNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLScalarVolumeNode")
             if firstVolumeNode:
                 self._parameterNode.SetNodeReferenceID("InputVolume", firstVolumeNode.GetID())
-        
-        
-        # Select default segmentation node
-        if not self._parameterNode.GetNodeReference("InputSegmentation"):
-            firstSegmentationNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSegmentationNode")
-            if firstSegmentationNode:
-                self._parameterNode.SetNodeReferenceID("InputSegmentation", firstSegmentationNode.GetID())
 
     def setParameterNode(self, inputParameterNode):
         """
@@ -247,15 +241,19 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Update node selectors and sliders
         self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
-        self.ui.segmentationSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSegmentation"))
-            
-        if self._parameterNode.GetNodeReference("InputSegmentation"):
-            self.ui.scoreButton.toolTip = "Compute Agatston score"
-            self.ui.scoreButton.toolTip = True
+        self.ui.outputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolume"))
+        self.ui.invertedOutputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolumeInverse"))
+        self.ui.imageThresholdSliderWidget.value = float(self._parameterNode.GetParameter("Threshold"))
+        self.ui.invertOutputCheckBox.checked = (self._parameterNode.GetParameter("Invert") == "true")
+
+        # Update buttons states and tooltips
+        if self._parameterNode.GetNodeReference("InputVolume") and self._parameterNode.GetNodeReference("OutputVolume"):
+            self.ui.applyButton.toolTip = "Compute output volume"
+            self.ui.applyButton.enabled = True
         else:
-            self.ui.scoreButton.toolTip = "Select input segmentation node"
-            self.ui.scoreButton.toolTip = False
-            
+            self.ui.applyButton.toolTip = "Select input and output volume nodes"
+            self.ui.applyButton.enabled = False
+
         # All the GUI updates are done
         self._updatingGUIFromParameterNode = False
 
@@ -271,65 +269,35 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
 
         self._parameterNode.SetNodeReferenceID("InputVolume", self.ui.inputSelector.currentNodeID)
-        self._parameterNode.SetNodeReferenceID("InputSegmentation", self.ui.segmentationSelector.currentNodeID)
-        self._parameterNode.SetNodeReferenceID("InputCalibrationSegmentation", self.ui.calibrationSegmentationSelector.currentNodeID)
+        self._parameterNode.SetNodeReferenceID("OutputVolume", self.ui.outputSelector.currentNodeID)
+        self._parameterNode.SetParameter("Threshold", str(self.ui.imageThresholdSliderWidget.value))
+        self._parameterNode.SetParameter("Invert", "true" if self.ui.invertOutputCheckBox.checked else "false")
+        self._parameterNode.SetNodeReferenceID("OutputVolumeInverse", self.ui.invertedOutputSelector.currentNodeID)
 
         self._parameterNode.EndModify(wasModified)
 
-    def onScoreButton(self):
+    def onApplyButton(self):
         """
-        Uses selected volume and corresponding segmentation 
-        to apply Agatston scoring algorithm to calculate agatston score.
+        Run processing when user clicks "Apply" button.
         """
+        with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
 
-        # Load input volume and segmentation(s)
-        input_segmentation = self.ui.segmentationSelector.currentNode()
-        calibration_segmentation = self.ui.calibrationSegmentationSelector.currentNode()
-        input_volume = self.ui.inputSelector.currentNode()
+            # Compute output
+            self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),
+                               self.ui.imageThresholdSliderWidget.value, self.ui.invertOutputCheckBox.checked)
 
-        spacing = input_volume.GetSpacing()
+            # Compute inverted output (if needed)
+            if self.ui.invertedOutputSelector.currentNode():
+                # If additional output volume is selected then result with inverted threshold is written there
+                self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
+                                   self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
 
-        # Write segmentation to labelmap volume node with a geometry that matches the volume node
-        labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(input_segmentation, labelmap_volume_node, input_volume)
-
-        # Write calibration segmentation to labelmap volume node
-        labelmap_volume_node_calibration = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(calibration_segmentation, labelmap_volume_node_calibration, input_volume)
-
-        # Masking for input segmentation
-        voxels = slicer.util.arrayFromVolume(input_volume)
-        mask = slicer.util.arrayFromVolume(labelmap_volume_node)
-        masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
-        masked_voxels[mask == 0] = 0
-
-        # Masking using calibration segmentation
-        mask_calibration = slicer.util.arrayFromVolume(labelmap_volume_node_calibration)
-        masked_voxels_calibration = np.copy(voxels).astype(np.float)  # Convert to float
-        masked_voxels_calibration[mask_calibration == 0] = np.nan
-        
-        # Calculate the mean of the masked voxels using calibration segmentation
-        mean_value_calibration = np.nanmean(masked_voxels_calibration)
-        density_calibration = self.ui.calibrationDensitySpinBox.value
-        print(density_calibration)
-        # density_calibration = self.ui.calibrationDensitySpinBox.value()
-        # print(density_calibration)
-        # density_calibration = 0.200
-        mass_cal_factor = density_calibration / mean_value_calibration
-
-        # Score
-        alg = jl.Agatston()
-        agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_cal_factor, alg)
-
-        print(agatston_score)
-        print(volume_score)
-        print(mass_score)
 
 #
-# AgatstonLogic
+# VolumeFractionLogic
 #
 
-class AgatstonLogic(ScriptedLoadableModuleLogic):
+class VolumeFractionLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -349,34 +317,35 @@ class AgatstonLogic(ScriptedLoadableModuleLogic):
         """
         Initialize parameter node with default settings.
         """
-        if not parameterNode.GetParameter("Segment"):
-            parameterNode.SetParameter("Segment", "0.0")
+        if not parameterNode.GetParameter("Threshold"):
+            parameterNode.SetParameter("Threshold", "100.0")
         if not parameterNode.GetParameter("Invert"):
             parameterNode.SetParameter("Invert", "false")
 
-    def process(self, inputVolume, imageSegment, invert=False, showResult=True):
+    def process(self, inputVolume, outputVolume, imageThreshold, invert=False, showResult=True):
         """
         Run the processing algorithm.
         Can be used without GUI widget.
         :param inputVolume: volume to be thresholded
         :param outputVolume: thresholding result
-        :param imageSegment: values above/below this threshold will be set to 0
+        :param imageThreshold: values above/below this threshold will be set to 0
         :param invert: if True then values above the threshold will be set to 0, otherwise values below are set to 0
         :param showResult: show output volume in slice viewers
         """
 
-        # if not inputVolume or not outputVolume:
-        #     raise ValueError("Input or output volume is invalid")
+        if not inputVolume or not outputVolume:
+            raise ValueError("Input or output volume is invalid")
 
         import time
         startTime = time.time()
         logging.info('Processing started')
 
-        # Compute the thresholded output volume using the "Segment Scalar Volume" CLI module
+        # Compute the thresholded output volume using the "Threshold Scalar Volume" CLI module
         cliParams = {
             'InputVolume': inputVolume.GetID(),
-            'SegmentValue': imageSegment,
-            'SegmentType': 'Above' if invert else 'Below'
+            'OutputVolume': outputVolume.GetID(),
+            'ThresholdValue': imageThreshold,
+            'ThresholdType': 'Above' if invert else 'Below'
         }
         cliNode = slicer.cli.run(slicer.modules.thresholdscalarvolume, None, cliParams, wait_for_completion=True, update_display=showResult)
         # We don't need the CLI module node anymore, remove it to not clutter the scene with it
@@ -387,10 +356,10 @@ class AgatstonLogic(ScriptedLoadableModuleLogic):
 
 
 #
-# AgatstonTest
+# VolumeFractionTest
 #
 
-class AgatstonTest(ScriptedLoadableModuleTest):
+class VolumeFractionTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -406,50 +375,50 @@ class AgatstonTest(ScriptedLoadableModuleTest):
         """Run as few or as many tests as needed here.
         """
         self.setUp()
-        self.test_Agatston1()
+        self.test_VolumeFraction1()
 
-    # def test_Agatston1(self):
-    #     """ Ideally you should have several levels of tests.  At the lowest level
-    #     tests should exercise the functionality of the logic with different inputs
-    #     (both valid and invalid).  At higher levels your tests should emulate the
-    #     way the user would interact with your code and confirm that it still works
-    #     the way you intended.
-    #     One of the most important features of the tests is that it should alert other
-    #     developers when their changes will have an impact on the behavior of your
-    #     module.  For example, if a developer removes a feature that you depend on,
-    #     your test should break so they know that the feature is needed.
-    #     """
+    def test_VolumeFraction1(self):
+        """ Ideally you should have several levels of tests.  At the lowest level
+        tests should exercise the functionality of the logic with different inputs
+        (both valid and invalid).  At higher levels your tests should emulate the
+        way the user would interact with your code and confirm that it still works
+        the way you intended.
+        One of the most important features of the tests is that it should alert other
+        developers when their changes will have an impact on the behavior of your
+        module.  For example, if a developer removes a feature that you depend on,
+        your test should break so they know that the feature is needed.
+        """
 
-    #     self.delayDisplay("Starting the test")
+        self.delayDisplay("Starting the test")
 
-    #     # Get/create input data
+        # Get/create input data
 
-    #     import SampleData
-    #     registerSampleData()
-    #     inputVolume = SampleData.downloadSample('Agatston1')
-    #     self.delayDisplay('Loaded test data set')
+        import SampleData
+        registerSampleData()
+        inputVolume = SampleData.downloadSample('VolumeFraction1')
+        self.delayDisplay('Loaded test data set')
 
-    #     inputScalarRange = inputVolume.GetImageData().GetScalarRange()
-    #     self.assertEqual(inputScalarRange[0], 0)
-    #     self.assertEqual(inputScalarRange[1], 695)
+        inputScalarRange = inputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(inputScalarRange[0], 0)
+        self.assertEqual(inputScalarRange[1], 695)
 
-    #     # outputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
-    #     threshold = 100
+        outputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+        threshold = 100
 
-    #     # Test the module logic
+        # Test the module logic
 
-    #     logic = AgatstonLogic()
+        logic = VolumeFractionLogic()
 
-    #     # Test algorithm with non-inverted threshold
-    #     logic.process(inputVolume, outputVolume, threshold, True)
-    #     outputScalarRange = outputVolume.GetImageData().GetScalarRange()
-    #     self.assertEqual(outputScalarRange[0], inputScalarRange[0])
-    #     self.assertEqual(outputScalarRange[1], threshold)
+        # Test algorithm with non-inverted threshold
+        logic.process(inputVolume, outputVolume, threshold, True)
+        outputScalarRange = outputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(outputScalarRange[0], inputScalarRange[0])
+        self.assertEqual(outputScalarRange[1], threshold)
 
-    #     # Test algorithm with inverted threshold
-    #     logic.process(inputVolume, outputVolume, threshold, False)
-    #     outputScalarRange = outputVolume.GetImageData().GetScalarRange()
-    #     self.assertEqual(outputScalarRange[0], inputScalarRange[0])
-    #     self.assertEqual(outputScalarRange[1], inputScalarRange[1])
+        # Test algorithm with inverted threshold
+        logic.process(inputVolume, outputVolume, threshold, False)
+        outputScalarRange = outputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(outputScalarRange[0], inputScalarRange[0])
+        self.assertEqual(outputScalarRange[1], inputScalarRange[1])
 
-    #     self.delayDisplay('Test passed')
+        self.delayDisplay('Test passed')
