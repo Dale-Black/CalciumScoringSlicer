@@ -143,7 +143,6 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # (in the selected parameter node).
         self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
         self.ui.segmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-        self.ui.calibrationSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
         # Buttons
         self.ui.scoreButton.connect('clicked(bool)', self.onScoreButton)
@@ -271,7 +270,49 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Uses selected volume and corresponding segmentation 
         to apply Volume Fraction scoring algorithm to calculate volumefraction score.
         """
-        pass
+        
+        # Load input volume and segmentation(s)
+        input_segmentation = self.ui.segmentationSelector.currentNode()
+        calibration_segmentation = self.ui.calibrationSegmentationSelector.currentNode()
+        input_volume = self.ui.inputSelector.currentNode()
+
+        spacing = input_volume.GetSpacing()
+
+        # Write segmentation to labelmap volume node with a geometry that matches the volume node
+        labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
+        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(input_segmentation, labelmap_volume_node, input_volume)
+
+        # Write calibration segmentation to labelmap volume node
+        labelmap_volume_node_calibration = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
+        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(calibration_segmentation, labelmap_volume_node_calibration, input_volume)
+
+        # Masking for input segmentation
+        voxels = slicer.util.arrayFromVolume(input_volume)
+        mask = slicer.util.arrayFromVolume(labelmap_volume_node)
+        masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
+        masked_voxels[mask == 0] = 0
+        
+        # Calculate background intensity with background segmentation mask
+
+        # Masking using calibration segmentation
+        mask_calibration = slicer.util.arrayFromVolume(labelmap_volume_node_calibration)
+        masked_voxels_calibration = np.copy(voxels).astype(np.float)  # Convert to float
+        masked_voxels_calibration[mask_calibration == 0] = np.nan
+        
+        # Calculate the mean of the masked voxels using calibration segmentation
+        mean_value_calibration = np.nanmean(masked_voxels_calibration)
+        density_calibration = self.ui.calibrationDensitySpinBox.value
+
+        # density_calibration = self.ui.calibrationDensitySpinBox.value()
+        # print(density_calibration)
+        # density_calibration = 0.200
+        mass_cal_factor = density_calibration / mean_value_calibration
+
+        # Score
+        alg = jl.VolumeFraction()
+        volume_fraction_mass = jl.score(masked_voxels, calibration_rod_intensity, bkg_intensity, voxel_size, p_rod, alg)
+
+        print(f"Volume Fraction Mass: {agatston_score}")
 
 
 #
