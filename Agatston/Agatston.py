@@ -288,14 +288,13 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         input_volume = self.ui.inputSelector.currentNode()
 
         spacing = input_volume.GetSpacing()
+        
+        # Load calibration intensity
+        calibration_rod_intensity = self.ui.calibrationIntensitySpinBox.value
 
         # Write segmentation to labelmap volume node with a geometry that matches the volume node
         labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
         slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(input_segmentation, labelmap_volume_node, input_volume)
-
-        # Write calibration segmentation to labelmap volume node
-        labelmap_volume_node_calibration = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(calibration_segmentation, labelmap_volume_node_calibration, input_volume)
 
         # Masking for input segmentation
         voxels = slicer.util.arrayFromVolume(input_volume)
@@ -303,27 +302,21 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
         masked_voxels[mask == 0] = 0
 
-        # Masking using calibration segmentation
-        mask_calibration = slicer.util.arrayFromVolume(labelmap_volume_node_calibration)
-        masked_voxels_calibration = np.copy(voxels).astype(np.float)  # Convert to float
-        masked_voxels_calibration[mask_calibration == 0] = np.nan
-        
-        # Calculate the mean of the masked voxels using calibration segmentation
-        mean_value_calibration = np.nanmean(masked_voxels_calibration)
-        density_calibration = self.ui.calibrationDensitySpinBox.value
-
-        # density_calibration = self.ui.calibrationDensitySpinBox.value()
-        # print(density_calibration)
-        # density_calibration = 0.200
-        mass_cal_factor = density_calibration / mean_value_calibration
-
         # Score
         alg = jl.Agatston()
-        agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_cal_factor, alg)
-
-        print(f"Agatston Score: {agatston_score}")
-        print(f"Volume Score: {volume_score}")
-        print(f"Mass Score: {mass_score}")
+        
+        # If calibration intensity field left empty, calculate without calibration
+        if (calibration_rod_intensity == 0):
+            agatston_score, volume_score = jl.score(masked_voxels, spacing, alg)
+            print(f"Agatston Score: {agatston_score}")
+            print(f"Volume Score: {volume_score}")
+            
+        # Otherwise calculate mass score
+        else:
+            agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, calibration_rod_intensity, alg)
+            print(f"Agatston Score: {agatston_score}")
+            print(f"Volume Score: {volume_score}")
+            print(f"Mass Score: {mass_score}")
 
 #
 # AgatstonLogic
