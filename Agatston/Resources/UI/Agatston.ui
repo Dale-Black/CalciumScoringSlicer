@@ -125,6 +125,9 @@
         <property name="decimals">
          <number>7</number>
         </property>
+        <property name="value">
+         <double>0.200000000000000</double>
+        </property>
         <property name="quantity">
          <string notr="true"/>
         </property>
