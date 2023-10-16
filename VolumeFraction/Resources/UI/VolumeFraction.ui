@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
+    <width>334</width>
     <height>286</height>
    </rect>
   </property>
@@ -48,7 +48,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Input Segmentation:</string>
+         <string>Select CAC Segmentation:</string>
         </property>
        </widget>
       </item>
@@ -67,6 +67,48 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Select Calibration Segmentation:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="calibrationSegmentationSelector">
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLSegmentationNode</string>
+         </stringlist>
+        </property>
+        <property name="hideChildNodeTypes">
+         <stringlist notr="true"/>
+        </property>
+        <property name="interactionNodeSingletonTag">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Density Calibration:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qMRMLSpinBox" name="calibrationDensitySpinBox">
+        <property name="decimals">
+         <number>7</number>
+        </property>
+        <property name="value">
+         <double>0.200000000000000</double>
+        </property>
+        <property name="quantity">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -79,7 +121,7 @@
       <string>Run the algorithm.</string>
      </property>
      <property name="text">
-      <string>Apply</string>
+      <string>Score</string>
      </property>
     </widget>
    </item>
@@ -106,9 +148,19 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSpinBox</class>
+   <extends>ctkDoubleSpinBox</extends>
+   <header>qMRMLSpinBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
@@ -148,6 +200,38 @@
     <hint type="destinationlabel">
      <x>192</x>
      <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumeFraction</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>calibrationSegmentationSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>VolumeFraction</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>calibrationDensitySpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
