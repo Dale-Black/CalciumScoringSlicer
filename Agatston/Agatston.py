@@ -311,7 +311,7 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Calculate the mean of the masked voxels using calibration segmentation
         mean_value_calibration = np.nanmean(masked_voxels_calibration)
         density_calibration = self.ui.calibrationDensitySpinBox.value
-        print(density_calibration)
+
         # density_calibration = self.ui.calibrationDensitySpinBox.value()
         # print(density_calibration)
         # density_calibration = 0.200
@@ -321,9 +321,9 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         alg = jl.Agatston()
         agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_cal_factor, alg)
 
-        print(agatston_score)
-        print(volume_score)
-        print(mass_score)
+        print(f"Agatston Score: {agatston_score}")
+        print(f"Volume Score: {volume_score}")
+        print(f"Mass Score: {mass_score}")
 
 #
 # AgatstonLogic
