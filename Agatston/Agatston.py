@@ -284,13 +284,13 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Load input volume and segmentation(s)
         input_segmentation = self.ui.segmentationSelector.currentNode()
-        calibration_segmentation = self.ui.calibrationSegmentationSelector.currentNode()
         input_volume = self.ui.inputSelector.currentNode()
 
         spacing = input_volume.GetSpacing()
         
-        # Load calibration intensity
+        # Load calibration intensity and density
         calibration_rod_intensity = self.ui.calibrationIntensitySpinBox.value
+        p_rod = self.ui.calibrationDensitySpinBox.value
 
         # Write segmentation to labelmap volume node with a geometry that matches the volume node
         labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
@@ -301,6 +301,9 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         mask = slicer.util.arrayFromVolume(labelmap_volume_node)
         masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
         masked_voxels[mask == 0] = 0
+        
+        # Calculate mass calibration factor
+        mass_calibration_factor = p_rod / calibration_rod_intensity
 
         # Score
         alg = jl.Agatston()
@@ -313,7 +316,7 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             
         # Otherwise calculate mass score
         else:
-            agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, calibration_rod_intensity, alg)
+            agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_calibration_factor, alg)
             print(f"Agatston Score: {agatston_score}")
             print(f"Volume Score: {volume_score}")
             print(f"Mass Score: {mass_score}")

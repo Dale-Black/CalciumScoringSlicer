@@ -98,6 +98,9 @@
         <property name="decimals">
          <number>7</number>
         </property>
+        <property name="maximum">
+         <double>9999.989999999999782</double>
+        </property>
         <property name="value">
          <double>0.200000000000000</double>
         </property>
@@ -110,6 +113,9 @@
        <widget class="qMRMLSpinBox" name="calibrationIntensitySpinBox">
         <property name="decimals">
          <number>7</number>
+        </property>
+        <property name="maximum">
+         <double>9999.989999999999782</double>
         </property>
         <property name="quantity">
          <string notr="true"/>
