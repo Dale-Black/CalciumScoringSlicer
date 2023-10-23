@@ -245,7 +245,7 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.scoreButton.toolTip = "Compute Volume Fraction Score"
             self.ui.scoreButton.enabled = True
         else:
-            self.ui.scoreButton.toolTip = "Select input volume"
+            self.ui.scoreButton.toolTip = "Select inputs"
             self.ui.scoreButton.enabled = False
 
         # All the GUI updates are done

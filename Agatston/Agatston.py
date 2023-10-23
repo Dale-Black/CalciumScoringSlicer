@@ -254,7 +254,7 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.scoreButton.toolTip = "Compute Agatston score"
             self.ui.scoreButton.toolTip = True
         else:
-            self.ui.scoreButton.toolTip = "Select input segmentation node"
+            self.ui.scoreButton.toolTip = "Select inputs"
             self.ui.scoreButton.toolTip = False
             
         # All the GUI updates are done
