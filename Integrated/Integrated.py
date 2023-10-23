@@ -267,9 +267,45 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onScoreButton(self):
         """
-        Run processing when user clicks "Score" button.
+        Uses selected volume and corresponding segmentation 
+        to apply Volume Fraction scoring algorithm to calculate volumefraction score.
         """
-        pass
+        
+        # Load input volume and segmentation(s)
+        input_volume = self.ui.inputSelector.currentNode()
+        input_segmentation = self.ui.segmentationSelector.currentNode()
+        
+        spacing = input_volume.GetSpacing()
+
+        # Load calibration intensity and density
+        calibration_rod_intensity = self.ui.calibrationIntensitySpinBox.value
+        p_rod = self.ui.calibrationDensitySpinBox.value
+        
+        # Load background intensity
+        bkg_intensity = self.ui.backgroundIntensitySpinBox.value
+        
+        # Load and calculate voxel size
+        voxel_x = self.ui.voxelXSpinBox.value
+        voxel_y = self.ui.voxelYSpinBox.value
+        voxel_z = self.ui.voxelZSpinBox.value
+        
+        voxel_size = voxel_x * voxel_y * voxel_z
+        
+        # Write segmentation to labelmap volume node with a geometry that matches the volume node
+        labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
+        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(input_segmentation, labelmap_volume_node, input_volume)
+
+        # Masking for input segmentation
+        voxels = slicer.util.arrayFromVolume(input_volume)
+        mask = slicer.util.arrayFromVolume(labelmap_volume_node)
+        masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
+        masked_voxels[mask == 0] = 0
+
+        # Score
+        alg = jl.Integrated(masked_voxels)
+        integration_mass = jl.score(bkg_intensity, calibration_rod_intensity, spacing, p_rod, alg)
+
+        print(f"Integration Mass: {integration_mass}")
 
 
 #
