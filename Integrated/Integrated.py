@@ -12,26 +12,25 @@ import numpy as np
 slicer.util.pip_install('juliacall')
 from juliacall import Main as jl
 
-
 #
-# VolumeFraction
+# Integrated
 #
 
-class VolumeFraction(ScriptedLoadableModule):
+class Integrated(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "VolumeFraction"  # TODO: make this more human readable by adding spaces
+        self.parent.title = "Integrated"  # TODO: make this more human readable by adding spaces
         self.parent.categories = ["CalciumScoring"]  # TODO: set categories (folders where the module shows up in the module selector)
         self.parent.dependencies = []  # TODO: add here list of module names that this module requires
         self.parent.contributors = ["Dale Black (University of California, Irvine)", "Kelvin Zhao (University of California, Irvine)"]  # TODO: replace with "Firstname Lastname (Organization)"
         # TODO: update with short description of the module and a link to online module documentation
         self.parent.helpText = """
 This is an example of scripted loadable module bundled in an extension.
-See more information in <a href="https://github.com/organization/projectname#VolumeFraction">module documentation</a>.
+See more information in <a href="https://github.com/organization/projectname#Agatston">module documentation</a>.
 """
         # TODO: replace with organization, grant and thanks
         self.parent.acknowledgementText = """
@@ -60,44 +59,44 @@ def registerSampleData():
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
 
-    # VolumeFraction1
+    # Integrated1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='VolumeFraction',
-        sampleName='VolumeFraction1',
+        category='Integrated',
+        sampleName='Integrated1',
         # Thumbnail should have size of approximately 260x280 pixels and stored in Resources/Icons folder.
         # It can be created by Screen Capture module, "Capture all views" option enabled, "Number of images" set to "Single".
-        thumbnailFileName=os.path.join(iconsPath, 'VolumeFraction1.png'),
+        thumbnailFileName=os.path.join(iconsPath, 'Integrated1.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
-        fileNames='VolumeFraction1.nrrd',
+        fileNames='Integrated1.nrrd',
         # Checksum to ensure file integrity. Can be computed by this command:
         #  import hashlib; print(hashlib.sha256(open(filename, "rb").read()).hexdigest())
         checksums='SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95',
         # This node name will be used when the data set is loaded
-        nodeNames='VolumeFraction1'
+        nodeNames='Integrated1'
     )
 
-    # VolumeFraction2
+    # Integrated2
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='VolumeFraction',
-        sampleName='VolumeFraction2',
-        thumbnailFileName=os.path.join(iconsPath, 'VolumeFraction2.png'),
+        category='Integrated',
+        sampleName='Integrated2',
+        thumbnailFileName=os.path.join(iconsPath, 'Integrated2.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
-        fileNames='VolumeFraction2.nrrd',
+        fileNames='Integrated2.nrrd',
         checksums='SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97',
         # This node name will be used when the data set is loaded
-        nodeNames='VolumeFraction2'
+        nodeNames='Integrated2'
     )
 
 
 #
-# VolumeFractionWidget
+# IntegratedWidget
 #
 
-class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -120,7 +119,7 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/VolumeFraction.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath('UI/Integrated.ui'))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -131,7 +130,7 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Create logic class. Logic implements all computations that should be possible to run
         # in batch mode, without a graphical user interface.
-        self.logic = VolumeFractionLogic()
+        self.logic = IntegratedLogic()
 
         # Connections
 
@@ -142,10 +141,13 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # These connections ensure that whenever user changes some settings on the GUI, that is saved in the MRML scene
         # (in the selected parameter node).
         self.ui.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-        self.ui.segmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+        self.ui.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+        self.ui.imageThresholdSliderWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+        self.ui.invertOutputCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
+        self.ui.invertedOutputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
         # Buttons
-        self.ui.scoreButton.connect('clicked(bool)', self.onScoreButton)
+        self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
@@ -239,14 +241,18 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Update node selectors and sliders
         self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
+        self.ui.outputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolume"))
+        self.ui.invertedOutputSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputVolumeInverse"))
+        self.ui.imageThresholdSliderWidget.value = float(self._parameterNode.GetParameter("Threshold"))
+        self.ui.invertOutputCheckBox.checked = (self._parameterNode.GetParameter("Invert") == "true")
 
         # Update buttons states and tooltips
-        if self._parameterNode.GetNodeReference("InputVolume"):
-            self.ui.scoreButton.toolTip = "Compute Volume Fraction Score"
-            self.ui.scoreButton.enabled = True
+        if self._parameterNode.GetNodeReference("InputVolume") and self._parameterNode.GetNodeReference("OutputVolume"):
+            self.ui.applyButton.toolTip = "Compute output volume"
+            self.ui.applyButton.enabled = True
         else:
-            self.ui.scoreButton.toolTip = "Select input volume"
-            self.ui.scoreButton.enabled = False
+            self.ui.applyButton.toolTip = "Select input and output volume nodes"
+            self.ui.applyButton.enabled = False
 
         # All the GUI updates are done
         self._updatingGUIFromParameterNode = False
@@ -263,55 +269,35 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         wasModified = self._parameterNode.StartModify()  # Modify all properties in a single batch
 
         self._parameterNode.SetNodeReferenceID("InputVolume", self.ui.inputSelector.currentNodeID)
+        self._parameterNode.SetNodeReferenceID("OutputVolume", self.ui.outputSelector.currentNodeID)
+        self._parameterNode.SetParameter("Threshold", str(self.ui.imageThresholdSliderWidget.value))
+        self._parameterNode.SetParameter("Invert", "true" if self.ui.invertOutputCheckBox.checked else "false")
+        self._parameterNode.SetNodeReferenceID("OutputVolumeInverse", self.ui.invertedOutputSelector.currentNodeID)
 
         self._parameterNode.EndModify(wasModified)
 
-    def onScoreButton(self):
+    def onApplyButton(self):
         """
-        Uses selected volume and corresponding segmentation 
-        to apply Volume Fraction scoring algorithm to calculate volumefraction score.
+        Run processing when user clicks "Apply" button.
         """
-        
-        # Load input volume and segmentation(s)
-        input_volume = self.ui.inputSelector.currentNode()
-        input_segmentation = self.ui.segmentationSelector.currentNode()
+        with slicer.util.tryWithErrorDisplay("Failed to compute results.", waitCursor=True):
 
-        # Load calibration intensity and density
-        calibration_rod_intensity = self.ui.calibrationIntensitySpinBox.value
-        p_rod = self.ui.calibrationDensitySpinBox.value
-        
-        # Load background intensity
-        bkg_intensity = self.ui.backgroundIntensitySpinBox.value
-        
-        # Load and calculate voxel size
-        voxel_x = self.ui.voxelXSpinBox.value
-        voxel_y = self.ui.voxelYSpinBox.value
-        voxel_z = self.ui.voxelZSpinBox.value
-        
-        voxel_size = voxel_x * voxel_y * voxel_z
-        
-        # Write segmentation to labelmap volume node with a geometry that matches the volume node
-        labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
-        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(input_segmentation, labelmap_volume_node, input_volume)
+            # Compute output
+            self.logic.process(self.ui.inputSelector.currentNode(), self.ui.outputSelector.currentNode(),
+                               self.ui.imageThresholdSliderWidget.value, self.ui.invertOutputCheckBox.checked)
 
-        # Masking for input segmentation
-        voxels = slicer.util.arrayFromVolume(input_volume)
-        mask = slicer.util.arrayFromVolume(labelmap_volume_node)
-        masked_voxels = np.copy(voxels)  # we don't want to modify the original volume
-        masked_voxels[mask == 0] = 0
-
-        # Score
-        alg = jl.VolumeFraction()
-        volume_fraction_mass = jl.score(masked_voxels, calibration_rod_intensity, bkg_intensity, voxel_size, p_rod, alg)
-
-        print(f"Volume Fraction Mass: {volume_fraction_mass}")
+            # Compute inverted output (if needed)
+            if self.ui.invertedOutputSelector.currentNode():
+                # If additional output volume is selected then result with inverted threshold is written there
+                self.logic.process(self.ui.inputSelector.currentNode(), self.ui.invertedOutputSelector.currentNode(),
+                                   self.ui.imageThresholdSliderWidget.value, not self.ui.invertOutputCheckBox.checked, showResult=False)
 
 
 #
-# VolumeFractionLogic
+# IntegratedLogic
 #
 
-class VolumeFractionLogic(ScriptedLoadableModuleLogic):
+class IntegratedLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -370,10 +356,10 @@ class VolumeFractionLogic(ScriptedLoadableModuleLogic):
 
 
 #
-# VolumeFractionTest
+# IntegratedTest
 #
 
-class VolumeFractionTest(ScriptedLoadableModuleTest):
+class IntegratedTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -389,9 +375,9 @@ class VolumeFractionTest(ScriptedLoadableModuleTest):
         """Run as few or as many tests as needed here.
         """
         self.setUp()
-        self.test_VolumeFraction1()
+        self.test_Integrated1()
 
-    def test_VolumeFraction1(self):
+    def test_Integrated1(self):
         """ Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
@@ -409,7 +395,7 @@ class VolumeFractionTest(ScriptedLoadableModuleTest):
 
         import SampleData
         registerSampleData()
-        inputVolume = SampleData.downloadSample('VolumeFraction1')
+        inputVolume = SampleData.downloadSample('Integrated1')
         self.delayDisplay('Loaded test data set')
 
         inputScalarRange = inputVolume.GetImageData().GetScalarRange()
@@ -421,7 +407,7 @@ class VolumeFractionTest(ScriptedLoadableModuleTest):
 
         # Test the module logic
 
-        logic = VolumeFractionLogic()
+        logic = IntegratedLogic()
 
         # Test algorithm with non-inverted threshold
         logic.process(inputVolume, outputVolume, threshold, True)
