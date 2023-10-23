@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>289</width>
-    <height>286</height>
+    <height>320</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -55,7 +55,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Calcium Intensity:</string>
+         <string>Calibration Intensity:</string>
         </property>
        </widget>
       </item>
@@ -82,7 +82,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="qMRMLSpinBox" name="calciumIntensitySpinBox">
+       <widget class="qMRMLSpinBox" name="calibrationIntensitySpinBox">
         <property name="decimals">
          <number>7</number>
         </property>
@@ -108,7 +108,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="qMRMLSpinBox" name="calciumDensitySpinBox">
+       <widget class="qMRMLSpinBox" name="calibrationDensitySpinBox">
         <property name="decimals">
          <number>7</number>
         </property>
@@ -123,7 +123,53 @@
       <item row="3" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Calcium Density:</string>
+         <string>Calibration Density:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Voxel size (x,y,z):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="qMRMLSpinBox" name="voxelXSpinBox">
+        <property name="decimals">
+         <number>7</number>
+        </property>
+        <property name="maximum">
+         <double>9999.989999999999782</double>
+        </property>
+        <property name="quantity">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="qMRMLSpinBox" name="voxelYSpinBox">
+        <property name="decimals">
+         <number>7</number>
+        </property>
+        <property name="maximum">
+         <double>9999.989999999999782</double>
+        </property>
+        <property name="quantity">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="qMRMLSpinBox" name="voxelZSpinBox">
+        <property name="decimals">
+         <number>7</number>
+        </property>
+        <property name="maximum">
+         <double>9999.989999999999782</double>
+        </property>
+        <property name="quantity">
+         <string notr="true"/>
         </property>
        </widget>
       </item>
@@ -224,7 +270,7 @@
   <connection>
    <sender>Integrated</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>calciumIntensitySpinBox</receiver>
+   <receiver>calibrationIntensitySpinBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -256,7 +302,7 @@
   <connection>
    <sender>Integrated</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>calciumDensitySpinBox</receiver>
+   <receiver>calibrationDensitySpinBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -266,6 +312,54 @@
     <hint type="destinationlabel">
      <x>211</x>
      <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Integrated</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>voxelXSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Integrated</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>voxelYSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Integrated</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>voxelZSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>144</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>211</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
