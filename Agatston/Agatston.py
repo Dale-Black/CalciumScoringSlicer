@@ -152,6 +152,7 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
         
+        # Load the latest Calcium Scoring package
         jl.Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
         jl.seval("using CalciumScoring")
 
