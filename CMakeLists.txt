@@ -23,6 +23,7 @@ add_subdirectory(Agatston)
 add_subdirectory(Agatston)
 add_subdirectory(VolumeFraction)
 add_subdirectory(Integrated)
+add_subdirectory(SpatiallyWeighted)
 ## NEXT_MODULE
 
 #-----------------------------------------------------------------------------
