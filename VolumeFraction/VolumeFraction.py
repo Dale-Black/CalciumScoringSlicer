@@ -269,7 +269,7 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onScoreButton(self):
         """
         Uses selected volume and corresponding segmentation 
-        to apply Volume Fraction scoring algorithm to calculate volumefraction score.
+        to apply Volume Fraction scoring algorithm to calculate volume fraction score.
         """
         
         # Load input volume and segmentation(s)

@@ -12,25 +12,26 @@ import numpy as np
 slicer.util.pip_install('juliacall')
 from juliacall import Main as jl
 
+
 #
-# Integrated
+# SpatiallyWeighted
 #
 
-class Integrated(ScriptedLoadableModule):
+class SpatiallyWeighted(ScriptedLoadableModule):
     """Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "Integrated"  # TODO: make this more human readable by adding spaces
+        self.parent.title = "SpatiallyWeighted"  # TODO: make this more human readable by adding spaces
         self.parent.categories = ["CalciumScoring"]  # TODO: set categories (folders where the module shows up in the module selector)
         self.parent.dependencies = []  # TODO: add here list of module names that this module requires
         self.parent.contributors = ["Dale Black (University of California, Irvine)", "Kelvin Zhao (University of California, Irvine)"]  # TODO: replace with "Firstname Lastname (Organization)"
         # TODO: update with short description of the module and a link to online module documentation
         self.parent.helpText = """
 This is an example of scripted loadable module bundled in an extension.
-See more information in <a href="https://github.com/organization/projectname#Agatston">module documentation</a>.
+See more information in <a href="https://github.com/organization/projectname#SpatiallyWeighted">module documentation</a>.
 """
         # TODO: replace with organization, grant and thanks
         self.parent.acknowledgementText = """
@@ -59,44 +60,44 @@ def registerSampleData():
     # To ensure that the source code repository remains small (can be downloaded and installed quickly)
     # it is recommended to store data sets that are larger than a few MB in a Github release.
 
-    # Integrated1
+    # SpatiallyWeighted1
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='Integrated',
-        sampleName='Integrated1',
+        category='SpatiallyWeighted',
+        sampleName='SpatiallyWeighted1',
         # Thumbnail should have size of approximately 260x280 pixels and stored in Resources/Icons folder.
         # It can be created by Screen Capture module, "Capture all views" option enabled, "Number of images" set to "Single".
-        thumbnailFileName=os.path.join(iconsPath, 'Integrated1.png'),
+        thumbnailFileName=os.path.join(iconsPath, 'SpatiallyWeighted1.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95",
-        fileNames='Integrated1.nrrd',
+        fileNames='SpatiallyWeighted1.nrrd',
         # Checksum to ensure file integrity. Can be computed by this command:
         #  import hashlib; print(hashlib.sha256(open(filename, "rb").read()).hexdigest())
         checksums='SHA256:998cb522173839c78657f4bc0ea907cea09fd04e44601f17c82ea27927937b95',
         # This node name will be used when the data set is loaded
-        nodeNames='Integrated1'
+        nodeNames='SpatiallyWeighted1'
     )
 
-    # Integrated2
+    # SpatiallyWeighted2
     SampleData.SampleDataLogic.registerCustomSampleDataSource(
         # Category and sample name displayed in Sample Data module
-        category='Integrated',
-        sampleName='Integrated2',
-        thumbnailFileName=os.path.join(iconsPath, 'Integrated2.png'),
+        category='SpatiallyWeighted',
+        sampleName='SpatiallyWeighted2',
+        thumbnailFileName=os.path.join(iconsPath, 'SpatiallyWeighted2.png'),
         # Download URL and target file name
         uris="https://github.com/Slicer/SlicerTestingData/releases/download/SHA256/1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97",
-        fileNames='Integrated2.nrrd',
+        fileNames='SpatiallyWeighted2.nrrd',
         checksums='SHA256:1a64f3f422eb3d1c9b093d1a18da354b13bcf307907c66317e2463ee530b7a97',
         # This node name will be used when the data set is loaded
-        nodeNames='Integrated2'
+        nodeNames='SpatiallyWeighted2'
     )
 
 
 #
-# IntegratedWidget
+# SpatiallyWeightedWidget
 #
 
-class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
+class SpatiallyWeightedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     """Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
@@ -119,7 +120,7 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/Integrated.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath('UI/SpatiallyWeighted.ui'))
         self.layout.addWidget(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
@@ -130,7 +131,7 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Create logic class. Logic implements all computations that should be possible to run
         # in batch mode, without a graphical user interface.
-        self.logic = IntegratedLogic()
+        self.logic = SpatiallyWeightedLogic()
 
         # Connections
 
@@ -238,10 +239,9 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Update node selectors and sliders
         self.ui.inputSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputVolume"))
 
-
         # Update buttons states and tooltips
         if self._parameterNode.GetNodeReference("InputVolume"):
-            self.ui.scoreButton.toolTip = "Compute Integration score"
+            self.ui.scoreButton.toolTip = "Compute Spatially Weighted score"
             self.ui.scoreButton.enabled = True
         else:
             self.ui.scoreButton.toolTip = "Select inputs"
@@ -268,28 +268,16 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onScoreButton(self):
         """
         Uses selected volume and corresponding segmentation 
-        to apply Integrated scoring algorithm to calculate integrated score.
+        to apply Spacially Weighted scoring algorithm to calculate spacially weighted score.
         """
         
         # Load input volume and segmentation(s)
         input_volume = self.ui.inputSelector.currentNode()
         input_segmentation = self.ui.segmentationSelector.currentNode()
-        
-        spacing = input_volume.GetSpacing()
 
         # Load calibration intensity and density
-        calibration_rod_intensity = self.ui.calibrationIntensitySpinBox.value
-        p_rod = self.ui.calibrationDensitySpinBox.value
-        
-        # Load background intensity
-        bkg_intensity = self.ui.backgroundIntensitySpinBox.value
-        
-        # Load and calculate voxel size
-        voxel_x = self.ui.voxelXSpinBox.value
-        voxel_y = self.ui.voxelYSpinBox.value
-        voxel_z = self.ui.voxelZSpinBox.value
-        
-        voxel_size = voxel_x * voxel_y * voxel_z
+        calibration_rod_mean_intensity = self.ui.calibrationMeanSpinBox.value
+        calibration_rod_std_intensity = self.ui.calibrationStdSpinBox.value
         
         # Write segmentation to labelmap volume node with a geometry that matches the volume node
         labelmap_volume_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode")
@@ -302,17 +290,17 @@ class IntegratedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         masked_voxels[mask == 0] = 0
 
         # Score
-        alg = jl.Integrated(masked_voxels)
-        integration_mass = jl.score(bkg_intensity, calibration_rod_intensity, spacing, p_rod, alg)
+        alg = jl.SpatiallyWeighted()
+        spatially_weighted_score = jl.score(masked_voxels, calibration_rod_mean_intensity, calibration_rod_std_intensity, alg)
 
-        print(f"Integration Mass: {integration_mass}")
+        print(f"Spatially Weighted Score: {spatially_weighted_score}")
 
 
 #
-# IntegratedLogic
+# SpatiallyWeightedLogic
 #
 
-class IntegratedLogic(ScriptedLoadableModuleLogic):
+class SpatiallyWeightedLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
     should be such that other python code can import
@@ -371,10 +359,10 @@ class IntegratedLogic(ScriptedLoadableModuleLogic):
 
 
 #
-# IntegratedTest
+# SpatiallyWeightedTest
 #
 
-class IntegratedTest(ScriptedLoadableModuleTest):
+class SpatiallyWeightedTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
     Uses ScriptedLoadableModuleTest base class, available at:
@@ -390,9 +378,9 @@ class IntegratedTest(ScriptedLoadableModuleTest):
         """Run as few or as many tests as needed here.
         """
         self.setUp()
-        self.test_Integrated1()
+        self.test_SpatiallyWeighted1()
 
-    def test_Integrated1(self):
+    def test_SpatiallyWeighted1(self):
         """ Ideally you should have several levels of tests.  At the lowest level
         tests should exercise the functionality of the logic with different inputs
         (both valid and invalid).  At higher levels your tests should emulate the
@@ -410,7 +398,7 @@ class IntegratedTest(ScriptedLoadableModuleTest):
 
         import SampleData
         registerSampleData()
-        inputVolume = SampleData.downloadSample('Integrated1')
+        inputVolume = SampleData.downloadSample('SpatiallyWeighted1')
         self.delayDisplay('Loaded test data set')
 
         inputScalarRange = inputVolume.GetImageData().GetScalarRange()
@@ -422,7 +410,7 @@ class IntegratedTest(ScriptedLoadableModuleTest):
 
         # Test the module logic
 
-        logic = IntegratedLogic()
+        logic = SpatiallyWeightedLogic()
 
         # Test algorithm with non-inverted threshold
         logic.process(inputVolume, outputVolume, threshold, True)
