@@ -304,8 +304,18 @@ class VolumeFractionWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         alg = jl.VolumeFraction()
         volume_fraction_mass = jl.score(masked_voxels, calibration_rod_intensity, bkg_intensity, voxel_size, p_rod, alg)
 
-        text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
-        text_output_node.SetText(f"Volume Fraction Mass: {volume_fraction_mass}")
+        from datetime import datetime
+
+        text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+        if text_output_node == None:
+            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+            text_output_node.SetText(f"{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                     f"  Volume Fraction Mass: {volume_fraction_mass}")
+        else:
+            text_output_node.SetText(text_output_node.GetText() + 
+                                     f"\n{datetime.now().strftime('%d/%m %H:%M:%S')}"
+                                     f"\n  Volume Fraction Mass: {volume_fraction_mass}")
+            
         self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
 
 

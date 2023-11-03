@@ -293,8 +293,18 @@ class SpatiallyWeightedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin)
         alg = jl.SpatiallyWeighted()
         spatially_weighted_score = jl.score(masked_voxels, calibration_rod_mean_intensity, calibration_rod_std_intensity, alg)
 
-        text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
-        text_output_node.SetText(f"Spatially Weighted Score: {spatially_weighted_score}")
+        from datetime import datetime
+
+        text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+        if text_output_node == None:
+            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+            text_output_node.SetText(f"{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                     f"  Spatially Weighted Score: {spatially_weighted_score}")
+        else:
+            text_output_node.SetText(text_output_node.GetText() + 
+                                     f"\n{datetime.now().strftime('%d/%m %H:%M:%S')}"
+                                     f"\n  Spatially Weighted Score: {spatially_weighted_score}")
+            
         self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
 
 
