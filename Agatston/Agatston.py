@@ -304,26 +304,50 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         masked_voxels[mask == 0] = 0
         
         # Calculate mass calibration factor
-        mass_calibration_factor = p_rod / calibration_rod_intensity
+        if (calibration_rod_intensity == 0):
+            mass_calibration_factor = None
+        else:
+            mass_calibration_factor = p_rod / calibration_rod_intensity
 
         # Score
         alg = jl.Agatston()
         
         # If calibration intensity field left empty, calculate without calibration
+        from datetime import datetime
+        
         if (calibration_rod_intensity == 0):
             agatston_score, volume_score = jl.score(masked_voxels, spacing, alg)
-            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
-            text_output_node.SetText(f"Agatston Score: {agatston_score}\n"
-                                     f"Volume Score: {volume_score}\n")
+            text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+            if text_output_node == None:
+                text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+                text_output_node.SetText(f"{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                         f"  Agatston Score: {agatston_score}\n"
+                                         f"  Volume Score: {volume_score}\n")
+            else:
+                text_output_node.SetText(text_output_node.GetText() + 
+                                         f"{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                         f"  Agatston Score: {agatston_score}\n"
+                                         f"  Volume Score: {volume_score}\n")
+            
             self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
             
         # Otherwise calculate mass score
         else:
             agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_calibration_factor, alg)
-            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
-            text_output_node.SetText(f"Agatston Score: {agatston_score}\n"
-                                     f"Volume Score: {volume_score}\n"
-                                     f"Mass Score: {mass_score}")
+            text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+            if text_output_node == None:
+                text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+                text_output_node.SetText(f"{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                         f"  Agatston Score: {agatston_score}\n"
+                                         f"  Volume Score: {volume_score}\n"
+                                         f"  Mass Score: {mass_score}")
+            else:
+                text_output_node.SetText(text_output_node.GetText() + 
+                                         f"\n{datetime.now().strftime('%d/%m %H:%M:%S')}\n"
+                                         f"  Agatston Score: {agatston_score}\n"
+                                         f"  Volume Score: {volume_score}\n"
+                                         f"  Mass Score: {mass_score}")
+            
             self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
 
 #
