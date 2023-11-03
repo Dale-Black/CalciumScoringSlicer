@@ -312,8 +312,10 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # If calibration intensity field left empty, calculate without calibration
         if (calibration_rod_intensity == 0):
             agatston_score, volume_score = jl.score(masked_voxels, spacing, alg)
-            print(f"Agatston Score: {agatston_score}")
-            print(f"Volume Score: {volume_score}")
+            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+            text_output_node.SetText(f"Agatston Score: {agatston_score}\n"
+                                     f"Volume Score: {volume_score}\n")
+            self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
             
         # Otherwise calculate mass score
         else:
