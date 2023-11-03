@@ -318,9 +318,11 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Otherwise calculate mass score
         else:
             agatston_score, volume_score, mass_score = jl.score(masked_voxels, spacing, mass_calibration_factor, alg)
-            print(f"Agatston Score: {agatston_score}")
-            print(f"Volume Score: {volume_score}")
-            print(f"Mass Score: {mass_score}")
+            text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+            text_output_node.SetText(f"Agatston Score: {agatston_score}\n"
+                                     f"Volume Score: {volume_score}\n"
+                                     f"Mass Score: {mass_score}")
+            self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
 
 #
 # AgatstonLogic

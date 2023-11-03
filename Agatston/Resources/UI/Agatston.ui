@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>458</width>
-    <height>334</height>
+    <height>350</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -126,6 +126,22 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="outputsCollapsibleButton">
+     <property name="text">
+      <string>Outputs</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="1">
+       <widget class="qMRMLTextWidget" name="outputTextWidget">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="scoreButton">
      <property name="text">
       <string>Score</string>
@@ -175,6 +191,17 @@
    <header>qMRMLWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTextWidget</class>
+   <extends>qSlicerWidget</extends>
+   <header>qMRMLTextWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -223,6 +250,22 @@
     <hint type="destinationlabel">
      <x>356</x>
      <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Agatston</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>outputTextWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>242</y>
     </hint>
    </hints>
   </connection>
