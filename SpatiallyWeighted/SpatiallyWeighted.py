@@ -293,7 +293,9 @@ class SpatiallyWeightedWidget(ScriptedLoadableModuleWidget, VTKObservationMixin)
         alg = jl.SpatiallyWeighted()
         spatially_weighted_score = jl.score(masked_voxels, calibration_rod_mean_intensity, calibration_rod_std_intensity, alg)
 
-        print(f"Spatially Weighted Score: {spatially_weighted_score}")
+        text_output_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTextNode")
+        text_output_node.SetText(f"Spatially Weighted Score: {spatially_weighted_score}")
+        self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
 
 
 #
