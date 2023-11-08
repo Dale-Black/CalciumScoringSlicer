@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
+    <width>470</width>
     <height>350</height>
    </rect>
   </property>
@@ -101,6 +101,9 @@
         <property name="maximum">
          <double>9999.989999999999782</double>
         </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
         <property name="value">
          <double>0.000000000000000</double>
         </property>
@@ -131,11 +134,106 @@
       <string>Outputs</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="1">
-       <widget class="qMRMLTextWidget" name="outputTextWidget">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
+      <item row="1" column="1">
+       <widget class="QFrame" name="horizontalFrame">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <property name="leftMargin">
+          <number>1</number>
+         </property>
+         <property name="topMargin">
+          <number>1</number>
+         </property>
+         <property name="rightMargin">
+          <number>1</number>
+         </property>
+         <property name="bottomMargin">
+          <number>1</number>
+         </property>
+         <item>
+          <widget class="qMRMLTextWidget" name="outputTextWidget">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="verticalWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetFixedSize</enum>
+            </property>
+            <property name="leftMargin">
+             <number>1</number>
+            </property>
+            <property name="topMargin">
+             <number>1</number>
+            </property>
+            <property name="rightMargin">
+             <number>1</number>
+            </property>
+            <property name="bottomMargin">
+             <number>1</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="clearButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Clear Output</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="saveButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Save Output</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="ctkDirectoryButton" name="saveDirectoryButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>85</width>
+                <height>100</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -169,6 +267,11 @@
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkDoubleSpinBox</class>
@@ -250,22 +353,6 @@
     <hint type="destinationlabel">
      <x>356</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Agatston</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>outputTextWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>228</x>
-     <y>174</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>242</y>
     </hint>
    </hints>
   </connection>

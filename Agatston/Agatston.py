@@ -12,6 +12,8 @@ import numpy as np
 slicer.util.pip_install('juliacall')
 from juliacall import Main as jl
 
+from datetime import datetime
+
 #
 # Agatston
 #
@@ -148,6 +150,8 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Buttons
         self.ui.scoreButton.connect('clicked(bool)', self.onScoreButton)
+        self.ui.clearButton.connect('clicked(bool)', self.onClearButton)
+        self.ui.saveButton.connect('clicked(bool)', self.onSaveButton)
 
         # Make sure parameter node is initialized (needed for module reload)
         self.initializeParameterNode()
@@ -277,6 +281,30 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self._parameterNode.EndModify(wasModified)
 
+    def onClearButton(self):
+        """
+        Clears all text within output display. 
+        If output was empty, does nothing.
+        """
+        text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+        if text_output_node == None:
+            return
+        text_output_node.SetText("")
+        self.ui.outputTextWidget.setMRMLTextNode(text_output_node)
+    
+    def onSaveButton(self):
+        """
+        Saves output to selected directory as a plain text file.
+        """
+        directory = self.ui.saveDirectoryButton.directory
+        if directory == '.':
+            return
+        text_output_node = self.ui.outputTextWidget.mrmlTextNode()
+        if text_output_node == None:
+            return
+        with open(directory + f"/{datetime.now().strftime('%d_%m_%y_%H_%M_%S')}.txt", 'w') as f:
+            f.write(text_output_node.GetText())
+
     def onScoreButton(self):
         """
         Uses selected volume and corresponding segmentation 
@@ -313,8 +341,6 @@ class AgatstonWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         alg = jl.Agatston()
         
         # If calibration intensity field left empty, calculate without calibration
-        from datetime import datetime
-        
         if (calibration_rod_intensity == 0):
             agatston_score, volume_score = jl.score(masked_voxels, spacing, alg)
             text_output_node = self.ui.outputTextWidget.mrmlTextNode()
